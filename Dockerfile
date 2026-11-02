@@ -9,6 +9,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py .
+COPY templates/ templates/
 
 # Identification de la version, injectée par le pipeline au build.
 ARG APP_VERSION=dev

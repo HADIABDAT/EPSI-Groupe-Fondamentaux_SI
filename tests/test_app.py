@@ -8,6 +8,13 @@ def client():
     return create_app().test_client()
 
 
+def test_page_d_accueil(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "text/html" in response.content_type
+    assert b"NovaServices" in response.data
+
+
 def test_health_repond_200(client):
     response = client.get("/health")
     assert response.status_code == 200

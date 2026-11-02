@@ -17,6 +17,7 @@ tests → image Docker → publication GHCR → déploiement sur VM de préprodu
 
 | Méthode | Route | Rôle |
 |---|---|---|
+| GET | `/` | Interface web (liste, filtre, création de tickets) |
 | GET | `/health` | Contrôle de disponibilité (`503` si `FAIL_HEALTH=1`) |
 | GET | `/version` | Version et commit Git de l'image |
 | GET | `/tickets?statut=ouvert` | Liste (filtre optionnel) |

@@ -2,7 +2,7 @@
 
 import os
 
-from flask import Flask, abort, jsonify, request
+from flask import Flask, abort, jsonify, render_template, request
 
 VALID_PRIORITIES = {"basse", "normale", "haute"}
 
@@ -16,6 +16,10 @@ def create_app():
         {"id": 2, "titre": "Accès VPN refusé", "priorite": "haute", "statut": "en_cours"},
         {"id": 3, "titre": "Demande de nouvel écran", "priorite": "basse", "statut": "ferme"},
     ]
+
+    @app.get("/")
+    def index():
+        return render_template("index.html")
 
     @app.get("/health")
     def health():
