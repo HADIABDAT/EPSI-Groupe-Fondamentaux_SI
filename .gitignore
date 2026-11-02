@@ -3,5 +3,5 @@
 __pycache__/
 *.pyc
 .pytest_cache/
-.github/workflows/ci-cd.yml
+
 TP_CI_CD_Etapes_Etudiants.pdf
