@@ -2,7 +2,11 @@
 
 import os
 
+from dotenv import load_dotenv
 from flask import Flask, abort, jsonify, render_template, request
+
+# Charge .env sans écraser les variables déjà définies (celles injectées par Docker et le pipeline priment).
+load_dotenv()
 
 VALID_PRIORITIES = {"basse", "normale", "haute"}
 

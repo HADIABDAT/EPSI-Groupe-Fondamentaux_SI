@@ -41,6 +41,7 @@ deploy.sh                    déploiement sur la VM + rollback
 python -m venv .venv
 source .venv/bin/activate          # Windows : .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
+cp .env.example .env               # lu par /version (non versionné)
 python app.py                      # http://localhost:8000/health
 python -m pytest -q
 ```
