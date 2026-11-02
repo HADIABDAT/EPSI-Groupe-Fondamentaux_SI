@@ -1,0 +1,7 @@
+.venv/
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.github/
+TP_CI_CD_Etapes_Etudiants.pdf
