@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       simulate_failure:
-        description: "Simuler une panne au déploiement (étape 13)"
+        description: "Simuler une panne au déploiement"
         type: boolean
         default: false
 

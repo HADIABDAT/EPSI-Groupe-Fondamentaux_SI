@@ -7,7 +7,7 @@
 #
 # Variables optionnelles :
 #   APP_PORT=8080          port publié sur la VM
-#   SIMULATE_FAILURE=1     démarre le conteneur avec /health en erreur (étape 13)
+#   SIMULATE_FAILURE=1     démarre le conteneur avec /health en erreur
 #
 # Sur la VM, $STATE_DIR/app.env (s'il existe) est passé au conteneur : JWT_SECRET, ADMIN_EMAIL,
 # ADMIN_PASSWORD, SEED_DEMO… La base est gardée dans le volume Docker « novaservices-data ».

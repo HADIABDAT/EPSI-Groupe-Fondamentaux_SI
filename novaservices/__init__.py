@@ -38,7 +38,7 @@ def create_app(config=None):
 
     @app.get("/health")
     def health():
-        # FAIL_HEALTH=1 permet de simuler une panne au déploiement (étape 13).
+        # FAIL_HEALTH=1 permet de simuler une panne au déploiement.
         if os.environ.get("FAIL_HEALTH") == "1":
             return jsonify(status="ko"), 503
         return jsonify(status="ok")
