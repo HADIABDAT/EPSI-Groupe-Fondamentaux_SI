@@ -100,14 +100,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # La VM n'est joignable que par Tailscale : le runner rejoint le tailnet le temps du job.
-      - name: Rejoindre le réseau Tailscale
-        uses: tailscale/github-action@v3
-        with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-          tags: tag:ci
-
       - name: Préparer la clé SSH et l'empreinte de la VM
         run: |
           install -m 700 -d ~/.ssh
