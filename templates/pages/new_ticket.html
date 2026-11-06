@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Nouvelle demande{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Nouvelle demande</h1>
+    <p>Dis-nous ce qui ne marche pas. Le support te répond dans le ticket.</p>
+  </div>
+</div>
+<div class="grid">
+  <div class="span-7">
+    <form class="panel ds-stack" id="new-ticket" novalidate>
+      <p class="ds-error-message" data-form-error hidden>{{ icon("error") }}<span></span></p>
+      <div class="ds-field">
+        <label class="ds-label" for="title">Sujet</label>
+        <input class="ds-textfield" id="title" name="title" maxlength="120" required aria-describedby="title-help title-err">
+        <p class="ds-helper" id="title-help">Une phrase courte, par exemple « Imprimante du 2e étage hors ligne ».</p>
+        <p class="ds-error-message" id="title-err" data-for="title" hidden>{{ icon("error") }}<span></span></p>
+      </div>
+      <div class="ds-grid" style="--ds-gap: var(--ds-space-200)">
+        <div class="ds-field ds-col-6">
+          <label class="ds-label" for="category">Catégorie</label>
+          <select class="ds-select" id="category" name="category">
+            {% for key, name in meta.categories.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}
+          </select>
+          <p class="ds-error-message" data-for="category" hidden>{{ icon("error") }}<span></span></p>
+        </div>
+        <div class="ds-field ds-col-6">
+          <label class="ds-label" for="priority">Priorité</label>
+          <select class="ds-select" id="priority" name="priority" aria-describedby="priority-help">
+            {% for key, name in meta.priorities.items() %}<option value="{{ key }}" {% if key == "normale" %}selected{% endif %}>{{ name }}</option>{% endfor %}
+          </select>
+          <p class="ds-helper" id="priority-help">« Critique » : plusieurs personnes ne peuvent plus travailler.</p>
+        </div>
+      </div>
+      <div class="ds-field">
+        <label class="ds-label" for="description">Description</label>
+        <textarea class="ds-textarea" id="description" name="description" rows="8" required aria-describedby="description-help description-err"></textarea>
+        <p class="ds-helper" id="description-help">Ce qui se passe, depuis quand, sur quel poste, et le message d'erreur s'il y en a un.</p>
+        <p class="ds-error-message" id="description-err" data-for="description" hidden>{{ icon("error") }}<span></span></p>
+      </div>
+      <div class="form-actions">
+        <a class="ds-button ds-button--subtle" href="/">Annuler</a>
+        <button class="ds-button ds-button--primary" type="submit">Envoyer la demande</button>
+      </div>
+    </form>
+  </div>
+  <aside class="span-5">
+    <section class="panel" aria-labelledby="tips-title">
+      <div class="panel-head"><h2 id="tips-title">Ce qui aide le support</h2></div>
+      <ul class="rows">
+        <li class="row"><span><span class="row-title">Le message d'erreur exact</span><span class="row-meta">Copie-le, ou décris ce qui s'affiche à l'écran.</span></span></li>
+        <li class="row"><span><span class="row-title">Depuis quand</span><span class="row-meta">« Depuis la mise à jour de ce matin » aide à trouver la cause.</span></span></li>
+        <li class="row"><span><span class="row-title">Qui est touché</span><span class="row-meta">Toi seulement, ton équipe, tout le bâtiment ?</span></span></li>
+        <li class="row"><span><span class="row-title">Ce que tu as déjà essayé</span><span class="row-meta">Redémarrage, autre poste, autre navigateur.</span></span></li>
+      </ul>
+    </section>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(async () => {
+  await Nova.boot();
+  const form = document.getElementById("new-ticket");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const button = form.querySelector('[type="submit"]');
+    const body = Object.fromEntries(["title", "category", "priority", "description"].map((f) => [f, form.elements[f].value]));
+    Nova.busy(button, true);
+    try {
+      const ticket = await Nova.api("/api/tickets", { method: "POST", body });
+      location.href = "/tickets/" + ticket.id;
+    } catch (error) {
+      Nova.showErrors(form, error);
+      Nova.busy(button, false);
+    }
+  });
+})();
+</script>
+{% endblock %}

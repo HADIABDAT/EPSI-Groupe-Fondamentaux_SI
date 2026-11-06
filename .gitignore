@@ -3,5 +3,6 @@
 __pycache__/
 *.pyc
 .pytest_cache/
-
+instance/
+.taste-skill/
 TP_CI_CD_Etapes_Etudiants.pdf

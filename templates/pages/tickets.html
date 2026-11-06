@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Tickets{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 data-title>Mes demandes</h1>
+    <p data-summary><span class="skeleton-line" style="--w: 16em"></span></p>
+  </div>
+</div>
+
+<div class="counts" role="group" aria-label="Filtrer par statut" data-counts>
+  <button class="count-card" type="button" data-status="actifs" aria-pressed="true">Actifs <strong data-count="actifs">&nbsp;</strong></button>
+  {% for key, name in meta.statuses.items() %}
+  <button class="count-card" type="button" data-status="{{ key }}" aria-pressed="false">{{ name }} <strong data-count="{{ key }}">&nbsp;</strong></button>
+  {% endfor %}
+</div>
+
+<form class="toolbar" data-filters role="search">
+  <div class="ds-input-group">
+    {{ icon("search", "ds-icon--sm") }}
+    <label class="ds-visually-hidden" for="f-q">Rechercher</label>
+    <input class="ds-textfield" id="f-q" name="q" type="search" placeholder="Sujet, description ou numéro" autocomplete="off">
+  </div>
+  <label class="ds-visually-hidden" for="f-priority">Priorité</label>
+  <select class="ds-select" id="f-priority" name="priority">
+    <option value="">Toutes les priorités</option>
+    {% for key, name in meta.priorities.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}
+  </select>
+  <label class="ds-visually-hidden" for="f-category">Catégorie</label>
+  <select class="ds-select" id="f-category" name="category">
+    <option value="">Toutes les catégories</option>
+    {% for key, name in meta.categories.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}
+  </select>
+  <label class="ds-visually-hidden" for="f-assigned">Assignation</label>
+  <select class="ds-select" id="f-assigned" name="assigned" data-admin-only hidden>
+    <option value="">Toute l'équipe</option>
+    <option value="moi">Assignés à moi</option>
+    <option value="aucun">Non assignés</option>
+  </select>
+  <label class="ds-visually-hidden" for="f-sort">Tri</label>
+  <select class="ds-select" id="f-sort" name="sort">
+    <option value="recent">Mis à jour récemment</option>
+    <option value="ancien">Plus anciens d'abord</option>
+    <option value="priorite">Priorité la plus haute</option>
+  </select>
+</form>
+
+<div class="ds-table-wrap" data-results>
+  <table class="ds-table">
+    <caption class="ds-visually-hidden">Liste des tickets</caption>
+    <thead>
+      <tr>
+        <th scope="col" class="num">N°</th>
+        <th scope="col">Sujet</th>
+        <th scope="col">Priorité</th>
+        <th scope="col">Statut</th>
+        <th scope="col">Pris en charge par</th>
+        <th scope="col" class="num">Mis à jour</th>
+      </tr>
+    </thead>
+    <tbody data-rows></tbody>
+  </table>
+</div>
+<div class="list-foot" data-foot hidden>
+  <span data-range></span>
+  <nav aria-label="Pages"><ul class="ds-pagination" data-pages></ul></nav>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/pages/tickets.js') }}"></script>{% endblock %}

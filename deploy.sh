@@ -8,6 +8,9 @@
 # Variables optionnelles :
 #   APP_PORT=8080          port publié sur la VM
 #   SIMULATE_FAILURE=1     démarre le conteneur avec /health en erreur (étape 13)
+#
+# Sur la VM, $STATE_DIR/app.env (s'il existe) est passé au conteneur : JWT_SECRET, ADMIN_EMAIL,
+# ADMIN_PASSWORD, SEED_DEMO… La base est gardée dans le volume Docker « novaservices-data ».
 set -euo pipefail
 
 CONTAINER=novaservices-tickets
@@ -22,8 +25,10 @@ mkdir -p "$STATE_DIR"
 start_container() {
     local image=$1; shift
     docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
+    local env_args=()
+    [[ -f $STATE_DIR/app.env ]] && env_args=(--env-file "$STATE_DIR/app.env")
     docker run -d --name "$CONTAINER" --restart unless-stopped \
-        -p "$APP_PORT:8000" "$@" "$image" >/dev/null
+        -p "$APP_PORT:8000" -v novaservices-data:/data "${env_args[@]}" "$@" "$image" >/dev/null
 }
 
 # Attend que /health réponde 200 (durée maximale TIMEOUT), puis vérifie le commit sur /version.

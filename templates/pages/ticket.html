@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Ticket #{{ ticket_id }}{% endblock %}
+{% block content %}
+<div data-ticket="{{ ticket_id }}">
+  <div class="page-head">
+    <div>
+      <nav class="ds-breadcrumbs" aria-label="Fil d'Ariane">
+        <ol><li><a href="/tickets" data-parent>Tickets</a></li><li><span aria-current="page">#{{ ticket_id }}</span></li></ol>
+      </nav>
+      <h1 data-title><span class="skeleton-line" style="--w: 14em; height: 1.2em"></span></h1>
+      <p data-meta></p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="span-8 stack-gap">
+      <section class="panel" aria-labelledby="desc-title">
+        <div class="panel-head"><h2 id="desc-title">Description</h2></div>
+        <p class="description" data-description><span class="skeleton-line"></span></p>
+      </section>
+      <section class="panel" aria-labelledby="thread-title">
+        <div class="panel-head"><h2 id="thread-title">Échanges</h2><span class="stamp" data-thread-count></span></div>
+        <ol class="thread" data-thread></ol>
+        <form class="composer" data-composer novalidate>
+          <div class="ds-field">
+            <label class="ds-label" for="reply">Ta réponse</label>
+            <textarea class="ds-textarea" id="reply" name="body" rows="4" aria-describedby="reply-err"></textarea>
+            <p class="ds-error-message" id="reply-err" data-for="body" hidden>{{ icon("error") }}<span></span></p>
+          </div>
+          <div class="composer-foot">
+            <span class="ds-helper" data-composer-help></span>
+            <button class="ds-button" type="submit">{{ icon("send", "ds-icon--sm") }}Envoyer</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="span-4 stack-gap">
+      <section class="panel" aria-labelledby="props-title">
+        <div class="panel-head"><h2 id="props-title">Traitement</h2><span class="stamp" data-saved aria-live="polite"></span></div>
+        <dl class="props" data-props></dl>
+        <div class="panel-actions" data-actions></div>
+      </section>
+      <section class="panel" aria-labelledby="history-title">
+        <div class="panel-head"><h2 id="history-title">Historique</h2></div>
+        <ol class="history" data-history></ol>
+      </section>
+    </div>
+  </div>
+</div>
+
+<dialog class="ds-modal" id="delete-dialog" aria-labelledby="delete-title">
+  <form method="dialog">
+    <div class="ds-modal-header"><h2 id="delete-title">Supprimer le ticket #{{ ticket_id }} ?</h2></div>
+    <div class="ds-modal-body"><p>Le ticket, ses échanges et son historique seront effacés. Cette action est définitive.</p></div>
+    <div class="ds-modal-footer">
+      <button class="ds-button" value="" autofocus>Annuler</button>
+      <button class="ds-button ds-button--danger" value="delete">Supprimer le ticket</button>
+    </div>
+  </form>
+</dialog>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/pages/ticket.js') }}"></script>{% endblock %}

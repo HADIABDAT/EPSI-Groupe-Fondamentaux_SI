@@ -1,0 +1,34 @@
+{% extends "auth_base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Connexion{% endblock %}
+{% block form %}
+<h1>Connexion</h1>
+<p>Connecte-toi pour suivre tes demandes.</p>
+<form id="login-form" class="ds-stack" novalidate>
+  <p class="ds-error-message" data-form-error hidden>{{ icon("error") }}<span></span></p>
+  <div class="ds-field">
+    <label class="ds-label" for="email">Adresse e-mail</label>
+    <input class="ds-textfield" id="email" name="email" type="email" autocomplete="username" required>
+  </div>
+  <div class="ds-field">
+    <label class="ds-label" for="password">Mot de passe</label>
+    <input class="ds-textfield" id="password" name="password" type="password" autocomplete="current-password" required>
+  </div>
+  <button class="ds-button ds-button--primary ds-button--lg ds-button--full" type="submit">Se connecter</button>
+  <p class="ds-body-sm ds-text-subtle">Pas encore de compte ? <a class="ds-link" href="/inscription">Créer un compte</a></p>
+</form>
+{% if demo %}
+<section class="demo ds-section-message ds-section-message--neutral">
+  {{ icon("info") }}
+  <div>
+    <strong>Comptes de démonstration</strong>
+    <p>Mot de passe : <code>novaservices</code> (sauf si DEMO_PASSWORD est défini).</p>
+    <table>
+      <tr><td><button type="button" data-demo="camille.martin@novaservices.fr">Camille Martin</button></td><td class="ds-text-subtle">Compte administrateur</td></tr>
+      <tr><td><button type="button" data-demo="lea.fournier@novaservices.fr">Léa Fournier</button></td><td class="ds-text-subtle">Compte utilisateur · Comptabilité</td></tr>
+    </table>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/pages/auth.js') }}"></script>{% endblock %}

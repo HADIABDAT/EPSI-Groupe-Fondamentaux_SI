@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Page introuvable{% endblock %}
+{% block body %}
+<main class="ds-empty" style="min-height: 100vh; align-content: center">
+  {{ icon("search") }}
+  <h1 class="ds-heading-md">Cette page n'existe pas</h1>
+  <p>L'adresse est peut-être mal tapée, ou la page a été déplacée.</p>
+  <div class="ds-inline"><a class="ds-button ds-button--primary" href="/">Retour à NovaServices</a></div>
+</main>
+{% endblock %}

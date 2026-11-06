@@ -1,0 +1,77 @@
+<!doctype html>
+{% from "_macros.html" import icon, mark %}
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %} · NovaServices</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Rubik:wght@400;500&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='ds/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='ds/components.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 8a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v4a4 4 0 0 0 0 8v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4a4 4 0 0 0 0-8z' fill='%2380d4d7'/%3E%3C/svg%3E">
+  <script src="{{ url_for('static', filename='ds/icons.js') }}"></script>
+  <script src="{{ url_for('static', filename='ds/components.js') }}"></script>
+  <script type="application/json" id="nova-meta">{{ meta|tojson }}</script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+{% block body %}
+<div class="app" data-shell hidden>
+  <aside class="app-side" id="app-side">
+    <a class="app-brand" href="/">
+      {{ mark() }}
+      <span><strong>NovaServices</strong><small>Support informatique</small></span>
+    </a>
+    <nav class="ds-sidenav" aria-label="Navigation principale">
+      <div class="ds-sidenav-group">
+        <a href="/" {% if page == "dashboard" %}aria-current="page"{% endif %}>{{ icon("home") }}<span data-admin-text="Vue d'ensemble">Accueil</span></a>
+        <a href="/tickets" {% if page == "tickets" %}aria-current="page"{% endif %}>{{ icon("list") }}<span data-admin-text="Tickets">Mes demandes</span></a>
+        <a href="/tickets/nouveau" {% if page == "new" %}aria-current="page"{% endif %}>{{ icon("plus") }}<span>Nouvelle demande</span></a>
+      </div>
+      <div class="ds-sidenav-group" data-admin-only hidden>
+        <p class="ds-sidenav-heading">Administration</p>
+        <a href="/utilisateurs" {% if page == "users" %}aria-current="page"{% endif %}>{{ icon("users") }}<span>Utilisateurs</span></a>
+      </div>
+    </nav>
+    <div class="app-side-foot ds-sidenav">
+      <a href="/compte" {% if page == "account" %}aria-current="page"{% endif %}>{{ icon("user") }}<span>Mon compte</span></a>
+      <a href="/connexion" data-logout>{{ icon("power") }}<span>Se déconnecter</span></a>
+    </div>
+  </aside>
+
+  <header class="app-top">
+    <button class="ds-button ds-button--subtle ds-icon-button app-menu-button" type="button" aria-label="Ouvrir le menu" aria-controls="app-side" aria-expanded="false" data-nav-toggle>{{ icon("menu") }}</button>
+    <form class="app-search ds-input-group" action="/tickets" role="search">
+      {{ icon("search", "ds-icon--sm") }}
+      <label class="ds-visually-hidden" for="top-search">Rechercher un ticket</label>
+      <input class="ds-textfield" id="top-search" name="q" type="search" placeholder="Rechercher un ticket par sujet ou numéro" autocomplete="off">
+    </form>
+    <div class="app-top-end">
+      {% if page != "new" %}<a class="ds-button ds-button--primary ds-button--sm" href="/tickets/nouveau">{{ icon("plus", "ds-icon--sm") }}Nouvelle demande</a>{% endif %}
+      <span class="app-top-divider" aria-hidden="true"></span>
+      <div class="ds-dropdown">
+        <button class="app-account" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="account-menu">
+          <span class="ds-avatar" data-user-initials></span>
+          <div><strong data-user-name></strong><small data-user-role></small></div>
+        </button>
+        <div class="ds-menu ds-menu--end" id="account-menu" role="menu" hidden>
+          <a class="ds-menu-item" role="menuitem" href="/compte">{{ icon("user") }}Mon compte</a>
+          <button class="ds-menu-item" role="menuitem" type="button" data-ds-theme-toggle>{{ icon("sun") }}<span data-ds-theme-label>Thème clair</span></button>
+          <a class="ds-menu-item" role="menuitem" href="/connexion" data-logout>{{ icon("power") }}Se déconnecter</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main" id="contenu">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}{% endblock %}
+</body>
+</html>

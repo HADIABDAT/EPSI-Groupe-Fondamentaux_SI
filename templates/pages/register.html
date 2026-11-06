@@ -1,0 +1,34 @@
+{% extends "auth_base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Créer un compte{% endblock %}
+{% block form %}
+<h1>Créer un compte</h1>
+<p>Un compte suffit pour envoyer et suivre tes demandes au support.</p>
+<form id="register-form" class="ds-stack" novalidate>
+  <p class="ds-error-message" data-form-error hidden>{{ icon("error") }}<span></span></p>
+  <div class="ds-field">
+    <label class="ds-label" for="name">Nom complet</label>
+    <input class="ds-textfield" id="name" name="name" autocomplete="name" required aria-describedby="name-err">
+    <p class="ds-error-message" id="name-err" data-for="name" hidden>{{ icon("error") }}<span></span></p>
+  </div>
+  <div class="ds-field">
+    <label class="ds-label" for="email">Adresse e-mail professionnelle</label>
+    <input class="ds-textfield" id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-err">
+    <p class="ds-error-message" id="email-err" data-for="email" hidden>{{ icon("error") }}<span></span></p>
+  </div>
+  <div class="ds-field">
+    <label class="ds-label" for="service">Service <span class="ds-optional">(facultatif)</span></label>
+    <input class="ds-textfield" id="service" name="service" autocomplete="organization-title">
+    <p class="ds-error-message" data-for="service" hidden>{{ icon("error") }}<span></span></p>
+  </div>
+  <div class="ds-field">
+    <label class="ds-label" for="password">Mot de passe</label>
+    <input class="ds-textfield" id="password" name="password" type="password" autocomplete="new-password" required aria-describedby="password-help password-err">
+    <p class="ds-helper" id="password-help">8 caractères au moins.</p>
+    <p class="ds-error-message" id="password-err" data-for="password" hidden>{{ icon("error") }}<span></span></p>
+  </div>
+  <button class="ds-button ds-button--primary ds-button--lg ds-button--full" type="submit">Créer mon compte</button>
+  <p class="ds-body-sm ds-text-subtle">Déjà un compte ? <a class="ds-link" href="/connexion">Se connecter</a></p>
+</form>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/pages/auth.js') }}"></script>{% endblock %}

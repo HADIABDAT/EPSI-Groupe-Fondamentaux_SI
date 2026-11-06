@@ -1,18 +1,9 @@
+"""Routes de contrôle, pages, démarrage et données de démonstration."""
+
 import pytest
 
-from app import create_app
-
-
-@pytest.fixture
-def client():
-    return create_app().test_client()
-
-
-def test_page_d_accueil(client):
-    response = client.get("/")
-    assert response.status_code == 200
-    assert "text/html" in response.content_type
-    assert b"NovaServices" in response.data
+from novaservices import create_app
+from novaservices.models import Ticket, User
 
 
 def test_health_repond_200(client):
@@ -32,42 +23,48 @@ def test_version_lit_les_variables_d_environnement(client, monkeypatch):
     assert client.get("/version").get_json() == {"version": "1.2.3", "commit": "abc123"}
 
 
-def test_liste_des_tickets(client):
-    response = client.get("/tickets")
+@pytest.mark.parametrize(
+    "url", ["/", "/connexion", "/inscription", "/tickets", "/tickets/nouveau", "/tickets/3", "/utilisateurs", "/compte"]
+)
+def test_les_pages_s_affichent(client, url):
+    response = client.get(url)
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, list)
-    assert len(data) == 3
-    assert {"id", "titre", "priorite", "statut"} <= data[0].keys()
-
-
-def test_filtre_par_statut(client):
-    data = client.get("/tickets?statut=ouvert").get_json()
-    assert [t["id"] for t in data] == [1]
-
-
-def test_ticket_par_id(client):
-    response = client.get("/tickets/2")
-    assert response.status_code == 200
-    assert response.get_json()["titre"] == "Accès VPN refusé"
-
-
-def test_creation_de_ticket(client):
-    response = client.post("/tickets", json={"titre": "Souris cassée", "priorite": "basse"})
-    assert response.status_code == 201
-    ticket = response.get_json()
-    assert ticket == {"id": 4, "titre": "Souris cassée", "priorite": "basse", "statut": "ouvert"}
-    assert client.get("/tickets/4").status_code == 200
-
-
-@pytest.mark.parametrize("payload", [{}, {"titre": "  "}, {"titre": "X", "priorite": "urgente"}])
-def test_creation_invalide_renvoie_400(client, payload):
-    assert client.post("/tickets", json=payload).status_code == 400
-
-
-def test_ticket_inexistant_renvoie_404(client):
-    assert client.get("/tickets/999").status_code == 404
+    assert "text/html" in response.content_type
+    assert b"NovaServices" in response.data
 
 
 def test_route_inexistante_renvoie_404(client):
     assert client.get("/route-inconnue").status_code == 404
+
+
+def test_route_api_inexistante_renvoie_du_json(client):
+    response = client.get("/api/inconnue")
+    assert response.status_code == 404
+    assert response.get_json() == {"erreur": "Ressource introuvable."}
+
+
+def test_methode_non_autorisee(client):
+    assert client.put("/api/tickets").status_code == 405
+
+
+def test_compte_admin_cree_au_demarrage(monkeypatch):
+    app = create_app(
+        {"SQLALCHEMY_DATABASE_URI": "sqlite://", "ADMIN_EMAIL": "Admin@NovaServices.fr", "ADMIN_PASSWORD": "motdepasse"}
+    )
+    with app.app_context():
+        admin = User.query.filter_by(email="admin@novaservices.fr").one()
+        assert admin.role == "admin" and admin.check_password("motdepasse")
+
+
+def test_donnees_de_demo_coherentes():
+    app = create_app({"SQLALCHEMY_DATABASE_URI": "sqlite://", "SEED_DEMO": True})
+    with app.app_context():
+        tickets = Ticket.query.all()
+        assert len(tickets) == 34
+        for ticket in tickets:
+            assert ticket.events[0].kind == "created"
+            assert (ticket.resolved_at is not None) == (ticket.status in ("resolu", "ferme"))
+            assert ticket.updated_at >= ticket.created_at
+            if ticket.status != "ouvert":
+                assert ticket.assigned_to.is_admin
+        assert User.query.filter_by(role="admin").count() == 2

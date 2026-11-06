@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Accueil{% endblock %}
+{% block content %}
+<!-- Vue du support : qu'est-ce qui attend une prise en charge ? -->
+<section data-view="admin" hidden>
+  <div class="page-head">
+    <div>
+      <h1>Vue d'ensemble</h1>
+      <p data-finding><span class="skeleton-line" style="--w: 28em"></span></p>
+    </div>
+    <span class="stamp" data-stamp></span>
+    <button class="ds-button ds-button--subtle ds-button--sm" type="button" data-refresh>{{ icon("refresh", "ds-icon--sm") }}Actualiser</button>
+  </div>
+
+  <dl class="kpis" style="--n: 5" data-kpis>
+    <div class="kpi kpi--lead"><dt>Tickets ouverts</dt><dd data-k="open">&nbsp;</dd><span class="hint">ouverts, en cours ou en attente</span></div>
+    <div class="kpi"><dt>Non assignés</dt><dd data-k="unassigned">&nbsp;</dd><span class="hint">personne ne les a pris</span></div>
+    <div class="kpi"><dt>Critiques ouverts</dt><dd data-k="critical_open">&nbsp;</dd><span class="hint">priorité critique</span></div>
+    <div class="kpi"><dt>Résolus</dt><dd data-k="resolved_7d">&nbsp;</dd><span class="hint" data-k-hint="resolved_7d">sur les 7 derniers jours</span></div>
+    <div class="kpi"><dt>Délai moyen de résolution</dt><dd data-k="avg">&nbsp;</dd><span class="hint" data-k-hint="avg">sur les 30 derniers jours</span></div>
+  </dl>
+
+  <div class="grid stretch">
+    <section class="panel span-7" aria-labelledby="queue-title">
+      <div class="panel-head"><h2 id="queue-title">File d'attente</h2><a class="ds-link" href="/tickets?status=actifs&assigned=aucun&sort=ancien">Voir tout</a></div>
+      <p class="panel-sub">Les tickets que personne n'a pris, du plus ancien au plus récent.</p>
+      <ul class="rows" data-queue></ul>
+    </section>
+    <section class="panel span-5" aria-labelledby="ages-title">
+      <div class="panel-head">
+        <h2 id="ages-title">Depuis combien de temps</h2>
+        <span class="legend"><span><i class="free"></i>Non assigné</span><span><i></i>Pris en charge</span></span>
+      </div>
+      <p class="panel-sub">Un carré par ticket ouvert, selon son ancienneté.</p>
+      <div class="ages" data-ages></div>
+      <div class="panel-head" style="margin-top: var(--ds-space-400)"><h2 id="split-title">Tickets ouverts par technicien</h2></div>
+      <div data-workload></div>
+    </section>
+    <section class="panel span-7" aria-labelledby="daily-title">
+      <div class="panel-head"><h2 id="daily-title">Tickets créés par jour</h2><span class="stamp">14 derniers jours</span></div>
+      <div data-daily></div>
+    </section>
+    <section class="panel span-5" aria-labelledby="categories-title" data-split>
+      <div class="panel-head"><h2 id="categories-title">Tickets ouverts par catégorie</h2></div>
+      <div data-categories></div>
+    </section>
+  </div>
+</section>
+
+<!-- Vue de l'utilisateur : où en sont mes demandes ? -->
+<section data-view="user" hidden>
+  <div class="page-head">
+    <div>
+      <h1>Accueil</h1>
+      <p data-finding><span class="skeleton-line" style="--w: 22em"></span></p>
+    </div>
+  </div>
+  <dl class="kpis" style="--n: 3">
+    <div class="kpi kpi--lead"><dt>Demandes en cours</dt><dd data-k="active">&nbsp;</dd><span class="hint">ouvertes ou en traitement</span></div>
+    <div class="kpi"><dt>Attendent ta réponse</dt><dd data-k="waiting_reply">&nbsp;</dd><span class="hint">le support t'a posé une question</span></div>
+    <div class="kpi"><dt>Résolues</dt><dd data-k="resolved_30d">&nbsp;</dd><span class="hint">sur les 30 derniers jours</span></div>
+  </dl>
+  <div class="grid stretch">
+    <section class="panel span-8" aria-labelledby="mine-title">
+      <div class="panel-head"><h2 id="mine-title">Demandes en cours</h2><a class="ds-link" href="/tickets?status=actifs">Voir tout</a></div>
+      <ul class="rows" data-active></ul>
+    </section>
+    <section class="panel span-4" aria-labelledby="done-title">
+      <div class="panel-head"><h2 id="done-title">Récemment résolues</h2><a class="ds-link" href="/tickets?status=resolu">Historique</a></div>
+      <ul class="rows" data-closed></ul>
+    </section>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pages/dashboard.js') }}"></script>
+{% endblock %}

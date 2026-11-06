@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Utilisateurs{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Utilisateurs</h1>
+    <p data-summary><span class="skeleton-line" style="--w: 16em"></span></p>
+  </div>
+  <button class="ds-button" type="button" data-ds-open="user-dialog">{{ icon("plus", "ds-icon--sm") }}Ajouter un compte</button>
+</div>
+
+<form class="toolbar" data-filters role="search">
+  <div class="ds-input-group">
+    {{ icon("search", "ds-icon--sm") }}
+    <label class="ds-visually-hidden" for="u-q">Rechercher</label>
+    <input class="ds-textfield" id="u-q" name="q" type="search" placeholder="Nom, adresse e-mail ou service" autocomplete="off">
+  </div>
+  <div class="ds-segmented" role="group" aria-label="Rôle" data-role-filter>
+    <button type="button" aria-pressed="true" data-role="">Tous</button>
+    <button type="button" aria-pressed="false" data-role="user">Utilisateurs</button>
+    <button type="button" aria-pressed="false" data-role="admin">Administrateurs</button>
+  </div>
+</form>
+
+<div class="ds-table-wrap">
+  <table class="ds-table">
+    <caption class="ds-visually-hidden">Comptes</caption>
+    <thead>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col" data-tablet="hide">Service</th>
+        <th scope="col">Rôle</th>
+        <th scope="col">Compte</th>
+        <th scope="col" class="num">Demandes ouvertes</th>
+        <th scope="col" class="num">Tickets assignés</th>
+        <th scope="col" class="num" data-tablet="hide">Créé le</th>
+        <th scope="col"><span class="ds-visually-hidden">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody data-rows></tbody>
+  </table>
+</div>
+
+<dialog class="ds-modal" id="user-dialog" aria-labelledby="user-dialog-title">
+  <form id="user-form" novalidate>
+    <div class="ds-modal-header"><h2 id="user-dialog-title">Ajouter un compte</h2></div>
+    <div class="ds-modal-body ds-stack">
+      <p class="ds-error-message" data-form-error hidden>{{ icon("error") }}<span></span></p>
+      <div class="ds-field">
+        <label class="ds-label" for="n-name">Nom complet</label>
+        <input class="ds-textfield" id="n-name" name="name" required>
+        <p class="ds-error-message" data-for="name" hidden>{{ icon("error") }}<span></span></p>
+      </div>
+      <div class="ds-field">
+        <label class="ds-label" for="n-email">Adresse e-mail</label>
+        <input class="ds-textfield" id="n-email" name="email" type="email" required>
+        <p class="ds-error-message" data-for="email" hidden>{{ icon("error") }}<span></span></p>
+      </div>
+      <div class="ds-field">
+        <label class="ds-label" for="n-service">Service <span class="ds-optional">(facultatif)</span></label>
+        <input class="ds-textfield" id="n-service" name="service">
+      </div>
+      <div class="ds-field">
+        <label class="ds-label" for="n-role">Rôle</label>
+        <select class="ds-select" id="n-role" name="role">
+          {% for key, name in meta.roles.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="ds-field">
+        <label class="ds-label" for="n-password">Mot de passe provisoire</label>
+        <input class="ds-textfield" id="n-password" name="password" type="text" autocomplete="off" required aria-describedby="n-password-help">
+        <p class="ds-helper" id="n-password-help">8 caractères au moins. Transmets-le à la personne : elle pourra le changer dans « Mon compte ».</p>
+        <p class="ds-error-message" data-for="password" hidden>{{ icon("error") }}<span></span></p>
+      </div>
+    </div>
+    <div class="ds-modal-footer">
+      <button class="ds-button" type="button" data-ds-close>Annuler</button>
+      <button class="ds-button ds-button--primary" type="submit">Créer le compte</button>
+    </div>
+  </form>
+</dialog>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/pages/users.js') }}"></script>{% endblock %}

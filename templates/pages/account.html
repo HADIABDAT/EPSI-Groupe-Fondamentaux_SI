@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Mon compte{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Mon compte</h1>
+    <p data-summary></p>
+  </div>
+</div>
+<div class="settings">
+  <section class="setting" aria-labelledby="profile-title">
+    <div><h2 id="profile-title">Profil</h2><p>Ton nom et ton service apparaissent sur tes demandes et tes messages.</p></div>
+    <form class="panel ds-stack" id="profile-form" novalidate>
+      <div class="ds-field">
+        <label class="ds-label" for="a-email">Adresse e-mail</label>
+        <input class="ds-textfield" id="a-email" readonly aria-describedby="a-email-help">
+        <p class="ds-helper" id="a-email-help">Pour la changer, demande au support.</p>
+      </div>
+      <div class="ds-field">
+        <label class="ds-label" for="a-name">Nom complet</label>
+        <input class="ds-textfield" id="a-name" name="name" required>
+        <p class="ds-error-message" data-for="name" hidden>{{ icon("error") }}<span></span></p>
+      </div>
+      <div class="ds-field">
+        <label class="ds-label" for="a-service">Service <span class="ds-optional">(facultatif)</span></label>
+        <input class="ds-textfield" id="a-service" name="service">
+        <p class="ds-error-message" data-for="service" hidden>{{ icon("error") }}<span></span></p>
+      </div>
+      <div class="form-actions"><button class="ds-button ds-button--primary" type="submit">Enregistrer le profil</button></div>
+    </form>
+  </section>
+  <section class="setting" aria-labelledby="password-title">
+    <div><h2 id="password-title">Mot de passe</h2><p>8 caractères au moins. Les autres sessions restent ouvertes jusqu'à leur expiration.</p></div>
+    <form class="panel ds-stack" id="password-form" novalidate>
+      <input type="text" name="username" autocomplete="username" hidden>
+      <div class="ds-field">
+        <label class="ds-label" for="a-current">Mot de passe actuel</label>
+        <input class="ds-textfield" id="a-current" name="current" type="password" autocomplete="current-password" required>
+        <p class="ds-error-message" data-for="current" hidden>{{ icon("error") }}<span></span></p>
+      </div>
+      <div class="ds-field">
+        <label class="ds-label" for="a-new">Nouveau mot de passe</label>
+        <input class="ds-textfield" id="a-new" name="new" type="password" autocomplete="new-password" required>
+        <p class="ds-error-message" data-for="new" hidden>{{ icon("error") }}<span></span></p>
+      </div>
+      <div class="form-actions"><button class="ds-button ds-button--primary" type="submit">Changer le mot de passe</button></div>
+    </form>
+  </section>
+  <section class="setting" aria-labelledby="theme-title">
+    <div><h2 id="theme-title">Apparence</h2><p>Le choix est gardé sur cet appareil.</p></div>
+    <div class="panel">
+      <div class="ds-segmented" role="group" aria-label="Thème" data-theme-choice>
+        <button type="button" data-value="dark" aria-pressed="false">Sombre</button>
+        <button type="button" data-value="light" aria-pressed="false">Clair</button>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(async () => {
+  const { api, showErrors, busy, flag, label } = Nova;
+  let user = await Nova.boot();
+  const profile = document.getElementById("profile-form");
+  const password = document.getElementById("password-form");
+
+  function fill() {
+    document.querySelector("[data-summary]").textContent = `${label("roles", user.role)} · compte créé le ${Nova.fmt.date(user.created_at)}`;
+    document.getElementById("a-email").value = user.email;
+    password.elements.username.value = user.email;
+    profile.elements.name.value = user.name;
+    profile.elements.service.value = user.service;
+  }
+  fill();
+
+  profile.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const button = profile.querySelector('[type="submit"]');
+    busy(button, true);
+    try {
+      user = await api("/api/auth/me", { method: "PATCH", body: { name: profile.elements.name.value, service: profile.elements.service.value } });
+      showErrors(profile, { fields: {} });
+      document.querySelectorAll("[data-user-name]").forEach((el) => { el.textContent = user.name; });
+      fill();
+      flag("Profil enregistré");
+    } catch (error) { showErrors(profile, error); }
+    busy(button, false);
+  });
+
+  password.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const button = password.querySelector('[type="submit"]');
+    busy(button, true);
+    try {
+      await api("/api/auth/me/password", { method: "POST", body: { current: password.elements.current.value, new: password.elements.new.value } });
+      password.reset();
+      password.elements.username.value = user.email;
+      showErrors(password, { fields: {} });
+      flag("Mot de passe modifié");
+    } catch (error) { showErrors(password, error); }
+    busy(button, false);
+  });
+
+  const themes = document.querySelector("[data-theme-choice]");
+  const mark = () => themes.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.value === document.documentElement.dataset.theme)));
+  mark();
+  DS.placeIndicator(themes, true);
+  themes.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-value]");
+    if (b) { DS.setTheme(b.dataset.value, true); mark(); }
+  });
+})();
+</script>
+{% endblock %}

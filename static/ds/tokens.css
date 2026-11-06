@@ -1,0 +1,328 @@
+/* =====================================================================
+   Design system perso — tokens
+   ---------------------------------------------------------------------
+   Deux niveaux :
+   1. Les primitives (--p-*) : la palette brute. On ne s'en sert JAMAIS
+      directement dans un composant ou une page.
+   2. Les tokens sémantiques (--ds-*) : nommés par rôle (« texte discret »,
+      « fond sélectionné »…). Ce sont eux qu'on utilise partout. Ils changent
+      de valeur entre le thème sombre et le thème clair.
+
+   Thème : sombre par défaut. Clair avec data-theme="light" sur <html>,
+   ou automatiquement si le système est en clair et qu'aucun data-theme
+   n'est posé.
+   ===================================================================== */
+
+/* ---------- 1. Primitives ---------- */
+:root {
+  /* Neutres */
+  --p-neutral-0: #ffffff;
+  --p-neutral-50: #f7f7f8;
+  --p-neutral-100: #eeeef0;
+  --p-neutral-150: #e6e6e9;
+  --p-neutral-200: #dcdce0;
+  --p-neutral-300: #c4c5cb;
+  --p-neutral-400: #a2a4ad;
+  --p-neutral-500: #8e919a;
+  --p-neutral-600: #70737d;
+  --p-neutral-700: #5c5f68;
+  --p-neutral-750: #44464f;
+  --p-neutral-800: #34363e;
+  --p-neutral-850: #2c2e35;
+  --p-neutral-900: #212227;
+  --p-neutral-950: #1a1b1f;
+  --p-neutral-1000: #111215;
+  --p-neutral-1100: #0b0c0e;
+
+  /* Turquoise — l'accent (couleur du fond d'écran) */
+  --p-teal-100: #ddf3f4;
+  --p-teal-200: #b6e6e8;
+  --p-teal-300: #80d4d7;
+  --p-teal-400: #4fb9bd;
+  --p-teal-500: #1f989d;
+  --p-teal-600: #0e7479;
+  --p-teal-700: #0b5b5f;
+  --p-teal-800: #0a4245;
+
+  /* Rouge — danger, erreurs */
+  --p-red-100: #fdecea;
+  --p-red-200: #fbd0ca;
+  --p-red-300: #ffb59d;
+  --p-red-400: #f2836b;
+  --p-red-500: #d9452f;
+  --p-red-600: #b42318;
+  --p-red-700: #8c1c13;
+  --p-red-800: #5c140e;
+
+  /* Ambre — avertissement */
+  --p-amber-100: #fbf1dc;
+  --p-amber-200: #f4dfae;
+  --p-amber-300: #e9c47e;
+  --p-amber-400: #d9a84a;
+  --p-amber-500: #c48a1c;
+  --p-amber-600: #9a6610;
+  --p-amber-700: #744c0b;
+  --p-amber-800: #4d3308;
+
+  /* Vert — succès */
+  --p-green-100: #e1f4e8;
+  --p-green-200: #bfe6cd;
+  --p-green-300: #91d5ad;
+  --p-green-400: #62b886;
+  --p-green-500: #3f9b67;
+  --p-green-600: #2b7a4f;
+  --p-green-700: #1f5c3b;
+  --p-green-800: #153f29;
+
+  /* Bleu — information */
+  --p-blue-100: #e6ecff;
+  --p-blue-200: #c9d5ff;
+  --p-blue-300: #a3b8ff;
+  --p-blue-400: #7d97f2;
+  --p-blue-500: #5a76e0;
+  --p-blue-600: #3a58c2;
+  --p-blue-700: #2c4396;
+  --p-blue-800: #1e2e66;
+}
+
+/* ---------- 2. Tokens qui ne dépendent pas du thème ---------- */
+:root {
+  /* Police : une seule famille, plus une pour le code */
+  --ds-font-family: "Rubik", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ds-font-family-code: "JetBrainsMono Nerd Font", "JetBrains Mono", ui-monospace, monospace;
+  --ds-font-weight-regular: 400;
+  --ds-font-weight-medium: 500;
+
+  /* Échelle de texte : taille / hauteur de ligne */
+  --ds-font-heading-xxl: 500 2.5rem/1.1 var(--ds-font-family);     /* 40 px — titre d'affiche */
+  --ds-font-heading-xl: 500 2rem/1.125 var(--ds-font-family);      /* 32 px — titre de page */
+  --ds-font-heading-lg: 500 1.5rem/1.17 var(--ds-font-family);     /* 24 px */
+  --ds-font-heading-md: 500 1.25rem/1.2 var(--ds-font-family);     /* 20 px — titre de section */
+  --ds-font-heading-sm: 500 1rem/1.25 var(--ds-font-family);       /* 16 px */
+  --ds-font-heading-xs: 500 0.875rem/1.3 var(--ds-font-family);    /* 14 px */
+  --ds-font-body-lg: 400 1.125rem/1.55 var(--ds-font-family);      /* 18 px — introduction */
+  --ds-font-body: 400 1rem/1.55 var(--ds-font-family);             /* 16 px — texte courant */
+  --ds-font-body-sm: 400 0.875rem/1.45 var(--ds-font-family);      /* 14 px — interface dense */
+  --ds-font-body-xs: 400 0.75rem/1.35 var(--ds-font-family);       /* 12 px — métadonnées */
+  --ds-font-code: 400 0.875em/1.6 var(--ds-font-family-code);
+  --ds-letter-spacing-tight: -0.025em;                              /* titres de 24 px et plus */
+
+  /* Espacement : base 8, avec quelques demi-pas */
+  --ds-space-0: 0;
+  --ds-space-025: 2px;
+  --ds-space-050: 4px;
+  --ds-space-075: 6px;
+  --ds-space-100: 8px;
+  --ds-space-150: 12px;
+  --ds-space-200: 16px;
+  --ds-space-250: 20px;
+  --ds-space-300: 24px;
+  --ds-space-400: 32px;
+  --ds-space-500: 40px;
+  --ds-space-600: 48px;
+  --ds-space-800: 64px;
+  --ds-space-1000: 80px;
+  --ds-space-1200: 96px;
+
+  /* Arrondis */
+  --ds-radius-xs: 2px;     /* marques dans du texte */
+  --ds-radius-sm: 4px;     /* statuts, étiquettes, code en ligne */
+  --ds-radius-md: 6px;     /* boutons, champs */
+  --ds-radius-lg: 8px;     /* blocs, lignes de liste, menus */
+  --ds-radius-xl: 12px;    /* panneaux, fenêtres */
+  --ds-radius-full: 999px; /* avatars et interrupteurs uniquement */
+
+  /* Tailles */
+  --ds-size-control-sm: 32px;
+  --ds-size-control-md: 40px;
+  --ds-size-control-lg: 48px;
+  --ds-size-icon-sm: 16px;
+  --ds-size-icon-md: 20px;
+  --ds-size-icon-lg: 24px;
+  --ds-size-measure: 68ch;          /* largeur de lecture */
+  --ds-size-container-sm: 640px;
+  --ds-size-container-md: 960px;
+  --ds-size-container-lg: 1280px;
+
+  /* Mouvement */
+  --ds-duration-instant: 0ms;
+  --ds-duration-fast: 120ms;        /* survol, appui */
+  --ds-duration-normal: 200ms;      /* menu, info-bulle, onglet */
+  --ds-duration-slow: 320ms;        /* fenêtre, panneau, notification */
+  --ds-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ds-easing-enter: cubic-bezier(0, 0, 0, 1);     /* ce qui arrive : freine en fin */
+  --ds-easing-exit: cubic-bezier(0.3, 0, 1, 1);    /* ce qui part : accélère */
+  --ds-easing-spring: cubic-bezier(0.34, 1.4, 0.64, 1); /* léger rebond : cases, interrupteurs, fenêtres */
+
+  /* Superposition (z-index) */
+  --ds-z-base: 0;
+  --ds-z-sticky: 100;
+  --ds-z-dropdown: 200;
+  --ds-z-blanket: 300;
+  --ds-z-modal: 400;
+  --ds-z-flag: 500;
+  --ds-z-tooltip: 600;
+
+  /* Opacité */
+  --ds-opacity-disabled: 0.45;
+  --ds-opacity-loading: 0.6;
+
+  /* Points de rupture (pour mémoire : une variable CSS ne marche pas dans @media)
+     xs 0 · sm 480px · md 768px · lg 1024px · xl 1440px */
+}
+
+/* ---------- 3. Thème sombre (par défaut) ---------- */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces : chaque niveau monte d'un pas de ton */
+  --ds-surface-sunken: var(--p-neutral-1100);    /* creux : zone de code, fond derrière des panneaux */
+  --ds-surface: var(--p-neutral-1000);           /* fond de page */
+  --ds-surface-raised: var(--p-neutral-950);     /* panneaux, cartes */
+  --ds-surface-overlay: var(--p-neutral-900);    /* menus, fenêtres, info-bulles : ce qui flotte */
+  --ds-surface-hovered: var(--p-neutral-900);
+  --ds-surface-pressed: var(--p-neutral-850);
+
+  /* Fonds d'éléments */
+  --ds-background-input: var(--p-neutral-900);
+  --ds-background-input-hovered: var(--p-neutral-850);
+  --ds-background-neutral: var(--p-neutral-850);           /* bouton par défaut, étiquette */
+  --ds-background-neutral-hovered: var(--p-neutral-800);
+  --ds-background-neutral-pressed: var(--p-neutral-750);
+  --ds-background-neutral-subtle-hovered: var(--p-neutral-900);
+  --ds-background-neutral-subtle-pressed: var(--p-neutral-850);
+  --ds-background-bold: var(--p-neutral-50);               /* bouton principal : l'encre pleine */
+  --ds-background-bold-hovered: var(--p-neutral-200);
+  --ds-background-bold-pressed: var(--p-neutral-300);
+  --ds-background-selected: color-mix(in srgb, var(--p-teal-300) 16%, var(--p-neutral-950));
+  --ds-background-selected-hovered: color-mix(in srgb, var(--p-teal-300) 22%, var(--p-neutral-950));
+  --ds-background-brand: var(--p-teal-300);
+  --ds-background-brand-hovered: var(--p-teal-200);
+  --ds-background-disabled: var(--p-neutral-900);
+
+  --ds-background-success: color-mix(in srgb, var(--p-green-300) 14%, var(--p-neutral-950));
+  --ds-background-warning: color-mix(in srgb, var(--p-amber-300) 14%, var(--p-neutral-950));
+  --ds-background-danger: color-mix(in srgb, var(--p-red-300) 14%, var(--p-neutral-950));
+  --ds-background-info: color-mix(in srgb, var(--p-blue-300) 14%, var(--p-neutral-950));
+  --ds-background-success-bold: var(--p-green-300);
+  --ds-background-warning-bold: var(--p-amber-300);
+  --ds-background-danger-bold: var(--p-red-300);
+  --ds-background-danger-bold-hovered: var(--p-red-200);
+  --ds-background-info-bold: var(--p-blue-300);
+
+  /* Texte */
+  --ds-text: var(--p-neutral-100);
+  --ds-text-subtle: var(--p-neutral-400);
+  --ds-text-subtlest: var(--p-neutral-600);
+  --ds-text-disabled: var(--p-neutral-700);
+  --ds-text-inverse: var(--p-neutral-1000);
+  --ds-text-brand: var(--p-teal-300);
+  --ds-text-selected: var(--p-teal-300);
+  --ds-text-success: var(--p-green-300);
+  --ds-text-warning: var(--p-amber-300);
+  --ds-text-danger: var(--p-red-300);
+  --ds-text-info: var(--p-blue-300);
+  --ds-link: var(--p-teal-300);
+  --ds-link-pressed: var(--p-teal-200);
+
+  /* Icônes */
+  --ds-icon: var(--p-neutral-300);
+  --ds-icon-subtle: var(--p-neutral-500);
+  --ds-icon-brand: var(--p-teal-300);
+  --ds-icon-success: var(--p-green-300);
+  --ds-icon-warning: var(--p-amber-300);
+  --ds-icon-danger: var(--p-red-300);
+  --ds-icon-info: var(--p-blue-300);
+
+  /* Bordures : réservées aux champs de formulaire (contraste 3:1 exigé) et au focus */
+  --ds-border-input: var(--p-neutral-700);
+  --ds-border-focused: var(--p-teal-300);
+  --ds-border-danger: var(--p-red-300);
+
+  /* Traits de schéma et de graphique */
+  --ds-chart-line: var(--p-neutral-700);
+  --ds-chart-1: var(--p-teal-300);
+  --ds-chart-2: var(--p-blue-300);
+  --ds-chart-3: var(--p-amber-300);
+  --ds-chart-4: var(--p-green-300);
+  --ds-chart-tint: 26%;
+
+  /* Élévation : ombre uniquement pour ce qui flotte */
+  --ds-shadow-overlay: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 48px rgba(0, 0, 0, 0.55);
+  --ds-blanket: rgba(5, 6, 8, 0.6);   /* voile derrière une fenêtre */
+}
+
+/* ---------- 4. Thème clair ---------- */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --ds-surface-sunken: var(--p-neutral-150);
+  --ds-surface: var(--p-neutral-100);
+  --ds-surface-raised: var(--p-neutral-50);
+  --ds-surface-overlay: var(--p-neutral-0);
+  --ds-surface-hovered: var(--p-neutral-150);
+  --ds-surface-pressed: var(--p-neutral-200);
+
+  --ds-background-input: var(--p-neutral-0);
+  --ds-background-input-hovered: var(--p-neutral-50);
+  --ds-background-neutral: var(--p-neutral-150);
+  --ds-background-neutral-hovered: var(--p-neutral-200);
+  --ds-background-neutral-pressed: var(--p-neutral-300);
+  --ds-background-neutral-subtle-hovered: var(--p-neutral-150);
+  --ds-background-neutral-subtle-pressed: var(--p-neutral-200);
+  --ds-background-bold: var(--p-neutral-1000);
+  --ds-background-bold-hovered: var(--p-neutral-800);
+  --ds-background-bold-pressed: var(--p-neutral-700);
+  --ds-background-selected: color-mix(in srgb, var(--p-teal-600) 12%, var(--p-neutral-50));
+  --ds-background-selected-hovered: color-mix(in srgb, var(--p-teal-600) 18%, var(--p-neutral-50));
+  --ds-background-brand: var(--p-teal-600);
+  --ds-background-brand-hovered: var(--p-teal-700);
+  --ds-background-disabled: var(--p-neutral-150);
+
+  --ds-background-success: var(--p-green-100);
+  --ds-background-warning: var(--p-amber-100);
+  --ds-background-danger: var(--p-red-100);
+  --ds-background-info: var(--p-blue-100);
+  --ds-background-success-bold: var(--p-green-600);
+  --ds-background-warning-bold: var(--p-amber-500);
+  --ds-background-danger-bold: var(--p-red-600);
+  --ds-background-danger-bold-hovered: var(--p-red-700);
+  --ds-background-info-bold: var(--p-blue-600);
+
+  --ds-text: var(--p-neutral-1000);
+  --ds-text-subtle: var(--p-neutral-700);
+  --ds-text-subtlest: var(--p-neutral-600);
+  --ds-text-disabled: var(--p-neutral-400);
+  --ds-text-inverse: var(--p-neutral-0);
+  --ds-text-brand: var(--p-teal-600);
+  --ds-text-selected: var(--p-teal-700);
+  --ds-text-success: var(--p-green-700);
+  --ds-text-warning: var(--p-amber-700);
+  --ds-text-danger: var(--p-red-600);
+  --ds-text-info: var(--p-blue-700);
+  --ds-link: var(--p-teal-600);
+  --ds-link-pressed: var(--p-teal-800);
+
+  --ds-icon: var(--p-neutral-750);
+  --ds-icon-subtle: var(--p-neutral-600);
+  --ds-icon-brand: var(--p-teal-600);
+  --ds-icon-success: var(--p-green-600);
+  --ds-icon-warning: var(--p-amber-600);
+  --ds-icon-danger: var(--p-red-600);
+  --ds-icon-info: var(--p-blue-600);
+
+  --ds-border-input: var(--p-neutral-500);
+  --ds-border-focused: var(--p-teal-600);
+  --ds-border-danger: var(--p-red-600);
+
+  --ds-chart-line: var(--p-neutral-400);
+  --ds-chart-1: var(--p-teal-600);
+  --ds-chart-2: var(--p-blue-600);
+  --ds-chart-3: var(--p-amber-600);
+  --ds-chart-4: var(--p-green-600);
+  --ds-chart-tint: 15%;
+
+  --ds-shadow-overlay: 0 1px 2px rgba(17, 18, 21, 0.06), 0 18px 44px rgba(17, 18, 21, 0.14);
+  --ds-blanket: rgba(17, 18, 21, 0.4);
+}

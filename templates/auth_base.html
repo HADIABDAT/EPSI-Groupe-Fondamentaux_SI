@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, mark %}
+{% block body %}
+<div class="auth">
+  <section class="auth-form">
+    <div>
+      <a class="app-brand" href="/connexion" style="padding:0">{{ mark() }}<span><strong>NovaServices</strong><small>Support informatique</small></span></a>
+      {% block form %}{% endblock %}
+    </div>
+  </section>
+  <aside class="auth-side">
+    <h2>Le support informatique, dans une seule file.</h2>
+    <ol>
+      <li>{{ icon("edit") }}<span><strong>Décris ton problème</strong>Un sujet, une catégorie, et ce qui se passe. La demande arrive dans la file du support.</span></li>
+      <li>{{ icon("clock") }}<span><strong>Suis son traitement</strong>Tu vois qui l'a prise en charge, son statut et chaque changement.</span></li>
+      <li>{{ icon("send") }}<span><strong>Échange avec le support</strong>Les questions et les réponses restent dans le ticket, pas dans ta boîte mail.</span></li>
+    </ol>
+  </aside>
+</div>
+{% endblock %}

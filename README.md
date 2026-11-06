@@ -1,34 +1,78 @@
-# NovaServices — API de tickets (TP CI/CD)
+# NovaServices : helpdesk du support informatique (TP CI/CD)
 
-Mini-API Flask de gestion de tickets informatiques, avec une chaîne CI/CD complète :
-tests → image Docker → publication GHCR → déploiement sur VM de préproduction → rollback.
+Application Flask de ticketing : les utilisateurs envoient et suivent leurs demandes, le support les
+prend en charge, répond et les résout. Connexion par JWT, deux rôles (utilisateur et administrateur),
+un tableau de bord par rôle. Autour, une chaîne CI/CD : tests, image Docker, publication sur GHCR,
+déploiement sur une VM de préproduction, retour arrière.
 
 ## Fiche de choix du binôme (étape 1)
 
 | Rubrique | Valeur |
 |---|---|
-| Application et besoin métier | **NovaServices Tickets** : suivi des tickets du support informatique. Fonctionnalité modifiée : création de ticket + filtre par statut |
+| Application et besoin métier | **NovaServices** : helpdesk du support informatique. Fonctionnalités : comptes et connexion JWT, tickets, échanges, historique, tableaux de bord utilisateur et administrateur |
 | Source du projet | URL du dépôt GitHub du binôme |
 | Exécution | `python app.py` (dev) / `gunicorn app:app` (conteneur), port interne **8000** |
-| Validation | `GET /health` → 200 ; `GET /tickets` → liste JSON des tickets ; URL inconnue → 404 |
+| Validation | `GET /health` → 200 ; `GET /api/tickets` sans jeton → 401, avec jeton → liste JSON ; URL inconnue → 404 (102 tests en tout) |
 | Identification | `GET /version` → `{"version": APP_VERSION, "commit": GIT_COMMIT}` |
 
-## Routes
+## Rôles
+
+| | Utilisateur | Administrateur (support) |
+|---|---|---|
+| Tickets visibles | les siens | tous |
+| Créer un ticket, répondre | oui | oui |
+| Changer statut, priorité, catégorie, assignation | fermer sa demande, ou la rouvrir quand elle est résolue | oui |
+| Supprimer un ticket | non | oui |
+| Gérer les comptes | non | oui |
+
+Le rôle est relu en base à chaque requête : un compte rétrogradé ou désactivé perd ses droits tout de suite,
+même avec un jeton encore valide.
+
+## Pages
+
+| Adresse | Écran |
+|---|---|
+| `/connexion`, `/inscription` | Connexion et création de compte |
+| `/` | Administrateur : file d'attente, ancienneté des tickets ouverts, volumes, charge par technicien. Utilisateur : ses demandes en cours |
+| `/tickets` | Liste avec compteurs par statut, recherche, filtres, tri et pages |
+| `/tickets/nouveau` | Nouvelle demande |
+| `/tickets/<id>` | Détail : description, échanges, traitement, historique |
+| `/utilisateurs` | Gestion des comptes (administrateurs) |
+| `/compte` | Profil, mot de passe, thème |
+
+Les pages utilisent le design system perso, copié depuis `~/Documents/design-system` dans `static/ds/`.
+Elles chargent leurs données par l'API ; c'est l'API qui contrôle les droits.
+
+## API
+
+Toutes les routes `/api` sauf l'inscription et la connexion demandent l'en-tête `Authorization: Bearer <jeton>`.
 
 | Méthode | Route | Rôle |
 |---|---|---|
-| GET | `/` | Interface web (liste, filtre, création de tickets) |
+| POST | `/api/auth/register` | Créer un compte utilisateur, renvoie `{token, user}` |
+| POST | `/api/auth/login` | Se connecter, renvoie `{token, user}` |
+| GET, PATCH | `/api/auth/me` | Lire ou modifier son profil (nom, service) |
+| POST | `/api/auth/me/password` | Changer son mot de passe |
+| GET | `/api/tickets` | Liste : `status` (ou `actifs`), `priority`, `category`, `assigned` (`moi`, `aucun`, id), `q`, `sort` (`recent`, `ancien`, `priorite`), `page`, `per_page` |
+| GET | `/api/tickets/counts` | Nombre de tickets par statut |
+| POST | `/api/tickets` | Créer un ticket |
+| GET, PATCH, DELETE | `/api/tickets/<id>` | Détail, mise à jour, suppression (administrateur) |
+| POST | `/api/tickets/<id>/comments` | Ajouter un message |
+| GET | `/api/stats` | Chiffres du tableau de bord, limités aux tickets visibles |
+| GET, POST | `/api/users` | Lister ou créer des comptes (administrateur) |
+| PATCH | `/api/users/<id>` | Changer le rôle ou désactiver un compte (administrateur) |
 | GET | `/health` | Contrôle de disponibilité (`503` si `FAIL_HEALTH=1`) |
 | GET | `/version` | Version et commit Git de l'image |
-| GET | `/tickets?statut=ouvert` | Liste (filtre optionnel) |
-| GET | `/tickets/<id>` | Un ticket |
-| POST | `/tickets` | Création : `{"titre": "...", "priorite": "basse\|normale\|haute"}` |
 
 ## Structure
 
 ```
-app.py                       application Flask
-tests/test_app.py            tests pytest
+app.py                       point d'entrée (charge .env, crée l'application)
+novaservices/                modèles, authentification JWT, API, statistiques, pages, données de démo
+templates/                   pages HTML (Jinja)
+static/ds/                   design system (tokens, composants, icônes)
+static/app.css, static/js/   mise en page de l'application, client de l'API, graphiques, scripts des pages
+tests/                       tests pytest (auth, droits, tickets, comptes, statistiques, pages)
 requirements.txt             dépendances (versions fixées)
 Dockerfile                   image de l'application
 deploy.sh                    déploiement sur la VM + rollback
@@ -41,16 +85,21 @@ deploy.sh                    déploiement sur la VM + rollback
 python -m venv .venv
 source .venv/bin/activate          # Windows : .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-cp .env.example .env               # lu par /version (non versionné)
-python app.py                      # http://localhost:8000/health
+cp .env.example .env               # puis remplace JWT_SECRET et ADMIN_PASSWORD
+python app.py                      # http://localhost:8000
 python -m pytest -q
 ```
+
+Avec `SEED_DEMO=1`, une base vide est remplie au premier démarrage : deux administrateurs, cinq utilisateurs
+et 34 tickets répartis sur un mois. Les comptes de démo ont le mot de passe `novaservices` (ou `DEMO_PASSWORD`),
+par exemple `camille.martin@novaservices.fr` (compte administrateur) et `lea.fournier@novaservices.fr`.
+La base locale est dans `instance/novaservices.db` ; supprime ce fichier pour repartir de zéro.
 
 ## Docker (étape 9)
 
 ```bash
 docker build -t application-tp:local .
-docker run -d --name application-tp-local -p 8080:8000 application-tp:local
+docker run -d --name application-tp-local -p 8080:8000 -e SEED_DEMO=1 -e JWT_SECRET=dev application-tp:local
 curl -f http://localhost:8080/health
 docker logs application-tp-local
 docker rm -f application-tp-local
@@ -86,6 +135,17 @@ Dans *Settings → Environments*, créer l'environnement **`preprod`**, puis :
 | `DEPLOY_SSH_KEY` | clé privée de déploiement (jamais dans Git) |
 | `DEPLOY_KNOWN_HOSTS` | empreinte de la VM, ex. sortie de `ssh-keyscan -H 10.0.0.12` **vérifiée avec le formateur** |
 
+**Sur la VM**, crée `~/novaservices/app.env` une fois (il n'est jamais dans Git) ; `deploy.sh` le passe au conteneur :
+
+```
+JWT_SECRET=<une longue valeur aléatoire>
+ADMIN_EMAIL=admin@novaservices.fr
+ADMIN_PASSWORD=<mot de passe du premier administrateur>
+SEED_DEMO=1
+```
+
+La base SQLite est dans le volume Docker `novaservices-data` : elle survit aux déploiements et aux retours arrière.
+
 **Registre** : le package GHCR est privé par défaut. Le rendre public (*Packages → Package settings → Change visibility*)
 ou faire sur la VM un `docker login ghcr.io` avec un token `read:packages`.
 
@@ -94,8 +154,9 @@ ou faire sur la VM un `docker login ghcr.io` avec un token `read:packages`.
 
 ## Provoquer une régression (étape 8)
 
-Par exemple, dans `app.py`, remplacer `return jsonify(status="ok")` par `return jsonify(status="ok"), 500`,
-committer et pousser : `test_health_repond_200` échoue, le pipeline passe au rouge. Annuler la modification et repousser.
+Par exemple, dans `visible_tickets()` (`novaservices/tickets.py`), remplacer `if not g.user.is_admin:` par
+`if g.user.is_admin:`, committer et pousser : un utilisateur verrait les tickets des autres,
+`test_un_utilisateur_ne_voit_que_ses_tickets` échoue et le pipeline passe au rouge. Corriger et repousser.
 
 ## V2 et retour arrière (étape 13)
 
