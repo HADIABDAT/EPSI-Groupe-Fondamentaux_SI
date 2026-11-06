@@ -32,7 +32,7 @@ SORTS = {
 def visible_tickets():
     """Un administrateur voit tout ; un utilisateur ne voit que ses propres demandes."""
     query = Ticket.query
-    if not g.user.is_admin:
+    if g.user.is_admin:
         query = query.filter(Ticket.created_by_id == g.user.id)
     return query
 
